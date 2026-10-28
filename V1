@@ -1,0 +1,19 @@
+int CurrentPos = 0;
+int Destination = 0;
+
+uint8_t pHoistDir = 7;
+uint8_t pHoistPwm = 5; //controls Hoist(Car) Motor speed ; values can be 0 (off)..255 (maximum)
+uint8_t Mspeed = 0;
+
+void setup() {
+  // put your setup code here, to run once:
+
+  pinMode(pHoistDir, OUTPUT);
+  pinMode(pHoistPwm, OUTPUT);
+  
+}
+
+void loop() {
+  // put your main code here, to run repeatedly:
+
+}
