@@ -1,5 +1,5 @@
 int CurrentPos = 0;
-int Destination = 0;
+int Destination = 1;
 
 uint8_t pHoistDir = 7;
 uint8_t pHoistPwm = 5; //controls Hoist(Car) Motor speed ; values can be 0 (off)..255 (maximum)
@@ -10,10 +10,19 @@ void setup() {
 
   pinMode(pHoistDir, OUTPUT);
   pinMode(pHoistPwm, OUTPUT);
-  
+  Serial.begin(9600);
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
-
+  if (CurrentPos < Destination);
+   {
+      while (Mspeed < 200);
+      {
+        Mspeed += 20;
+        Serial.println(Mspeed);
+        delay(100);
+        }
+        
+    }
 }
