@@ -1,0 +1,114 @@
+int dig1=8;
+int dig2=9;
+int dig3=2;
+
+int DisplayPos1 = 0;
+int DisplayPos2 = 0;
+
+int CurrentPos = 1;
+
+// defining the three input pins as integer digits dig1, dig2 and dig3
+ 
+int MSD=0;
+int Middle=0;
+int LSD=0;
+
+// defining the variables into which the data from the pins is read into. 
+
+
+const int buttonPin = A2;
+int buttonState = 0;
+
+
+
+void setup() {
+
+// put your setup code here, to run once:
+
+pinMode(dig1,INPUT);
+pinMode(dig2,INPUT);
+pinMode(dig3,INPUT);
+//Serial.begin(9600); 
+
+//8-bit display
+pinMode(14,OUTPUT);
+pinMode(15,OUTPUT);
+}
+
+ 
+
+void loop() {
+
+// put your main code here, to run repeatedly:
+
+
+//floor sensors ------------------------
+LSD=digitalRead(dig1); 
+Middle=digitalRead(dig2); 
+MSD=digitalRead(dig3); \
+
+int flooreg=(LSD)+(Middle<<1)+(MSD<<2);
+
+// This turns our binary number into a decimal. Starting from the least significant figure (LSD) we then add the other two digits but must shift them one (<<1) or two (<<2) place(s)  to the left so that 1+1+1 is not 3 but 111 which is actually 7.
+
+//Serial.println(flooreg); 
+
+//delay(1000);
+
+//floor sensors end ------------------------
+
+//8-bit display ----------------------
+
+switch (CurrentPos)
+{
+  case 1:
+    DisplayPos1 = 0;
+    DisplayPos2 = 1;
+    break;
+
+   case 4:
+    DisplayPos1 = 1;
+    DisplayPos2 = 0;
+    break;
+
+   case 7:
+    DisplayPos1 = 1;
+    DisplayPos2 = 1;
+    break;
+  }
+
+  digitalWrite(14,DisplayPos1);
+  digitalWrite(15,DisplayPos2);
+
+//8-bit display end ----------------------
+
+//Yellow buttons -----------------------------
+  int sensorValue = analogRead(buttonPin);
+
+   if (sensorValue < 100){
+    buttonState = 0;
+  }
+ 
+  else if (sensorValue >= 100 && sensorValue < 310){
+    buttonState = 1;
+  }
+ 
+  else if (sensorValue >= 310 && sensorValue < 500){
+    buttonState = 3;
+  }
+ 
+  else if (sensorValue >= 500 && sensorValue < 690){
+    buttonState = 2;
+  }
+ 
+  else if (sensorValue >= 690){
+    buttonState = 4;
+  }
+
+ 
+  //Serial.println(sensorValue);
+  //delay(500);
+
+ //Yellow buttons end -----------------------------
+
+}
