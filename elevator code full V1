@@ -1,0 +1,338 @@
+int dig1=8;
+int dig2=9;
+int dig3=2;
+
+int DisplayPos1 = 0;
+int DisplayPos2 = 0;
+
+int CurrentPos = 1;
+int destination = 1;
+
+uint8_t pHoistDir = 7;
+uint8_t pHoistPwm = 5; //controls Hoist(Car) Motor speed ; values can be 0 (off)..255 (maximum)
+uint8_t Mspeed = 0;
+
+// defining the three input pins as integer digits dig1, dig2 and dig3 (7 segment)
+ 
+int MSD=0;
+int Middle=0;
+int LSD=0;
+
+// defining the variables into which the data from the pins is read into. 
+
+
+const int buttonPin = A2;
+int buttonState = 0;
+
+
+//Functions -----------------------------------------
+
+
+//function for elevator moving up
+void MoveUp()
+{
+  digitalWrite(pHoistDir, 1);
+  analogWrite(pHoistPwm, Mspeed);
+  }
+
+
+//function for elevator moving down
+void MoveDown()
+{
+  digitalWrite(pHoistDir, 0);
+  analogWrite(pHoistPwm, Mspeed);
+  }
+
+
+//function for motor stop
+void MotorStop()
+{
+  Mspeed = 0;
+  analogWrite(pHoistPwm, Mspeed);
+  }
+
+
+//function for elevator acceleration
+void CarAcceleration()
+{
+  //accelerate lift
+  while (Mspeed < 200)
+  {
+    Mspeed += 20;
+    //Serial.println(Mspeed);
+    //delay(100);
+    }
+  }
+
+
+//function for elevator Decceleration
+void CarDecceleration()
+{
+  //deccelerate lift
+  while (Mspeed > 20)
+  {
+    Mspeed -= 20;
+    //Serial.println(Mspeed);
+    //delay(100);
+
+    //instructions to motor
+    analogWrite(pHoistPwm, Mspeed);
+    }
+  }
+
+//function for controling elevator movement
+void Movement()
+{
+  if (CurrentPos < destination and CurrentPos != (destination - 1))
+   {
+    //accelerate lift
+    CarAcceleration();
+
+     //instructions to motor
+     MoveUp();
+    }
+
+
+  //for elevator moving down-------------
+  if (CurrentPos > destination and CurrentPos != (destination + 1))
+   {
+    //accelerate lift
+    CarAcceleration();
+
+      //instructions to motor
+      MoveDown();
+    }
+
+
+  //for elevator approaching destination--------------------
+  if (CurrentPos == (destination - 1) or CurrentPos == (destination + 1))
+  {
+    //deccelerate lift
+    CarDecceleration();
+    }
+
+
+
+  //for elevator at destination-----------------------
+  if (CurrentPos == destination)
+  {
+    //Serial.println(Mspeed);
+    //delay(100);
+        
+    //instructions to motor
+    MotorStop();
+    }
+  }
+
+//function for using seven segment display
+void SevenSegment()
+{
+  switch (CurrentPos)
+  {
+    case 1:
+      DisplayPos1 = 0;
+      DisplayPos2 = 1;
+      break;
+  
+     case 4:
+      DisplayPos1 = 1;
+      DisplayPos2 = 0;
+      break;
+  
+     case 7:
+      DisplayPos1 = 1;
+      DisplayPos2 = 1;
+      break;
+    }
+  }
+
+//function for using the call buttons
+void CallButtons()
+{
+ int sensorValue = analogRead(buttonPin);
+
+   if (sensorValue < 100){
+    buttonState = 0;
+  }
+ 
+  else if (sensorValue >= 100 && sensorValue < 280){
+    buttonState = 1;
+  }
+ 
+  else if (sensorValue >= 280 && sensorValue < 500){
+    buttonState = 3;
+  }
+ 
+  else if (sensorValue >= 500 && sensorValue < 675){
+    buttonState = 2;
+  }
+ 
+  else if (sensorValue >= 675){
+    buttonState = 4;
+  }
+
+ if (CurrentPos == 7 and buttonState == 1)
+ {
+  destination = 1;
+  //    Serial.println("Move down to floor 1");
+//  delay(1000);
+  }
+
+if (CurrentPos == 7 and buttonState == 2)
+ {
+  destination = 4;
+//    Serial.println("Move down to floor 2");
+//  delay(1000);
+  }
+
+ if (CurrentPos == 7 and buttonState == 3)
+ {
+  destination = 4;
+//  Serial.println("Move down to floor 2");
+//  delay(1000);
+  }
+
+if (CurrentPos == 7 and buttonState == 4)
+ {
+  destination = 7;
+//    Serial.println("Do nothing");
+//  delay(1000);
+  }
+
+  
+
+  if (CurrentPos == 1 and buttonState == 3)
+ {
+  destination = 4;
+//    Serial.println("Move up to floor 2");
+//  delay(1000);
+  }
+
+if (CurrentPos == 1 and buttonState == 4)
+ {
+  destination = 7;
+//      Serial.println("Move up to floor 3");
+//  delay(1000);
+  }
+
+   if (CurrentPos == 1 and buttonState == 2)
+ {
+  destination = 4;
+//    Serial.println("Move up to floor 2");
+//  delay(1000);
+  }
+
+if (CurrentPos == 1 and buttonState == 1)
+ {
+  destination = 7;
+//      Serial.println("Do nothing");
+//  delay(1000);
+  }
+
+  
+
+  if (CurrentPos == 4 and buttonState == 1)
+ {
+//  destination = 1;
+//    Serial.println("Move down to floor 1");
+//  delay(1000);
+  }
+
+if (CurrentPos == 4 and buttonState == 4)
+ {
+  destination = 7;
+//      Serial.println("Move up to floor 3");
+//  delay(1000);
+  }
+
+   if (CurrentPos == 4 and buttonState == 2)
+ {
+  destination = 4;
+//    Serial.println("Do nothing");
+//  delay(1000);
+  }
+
+if (CurrentPos == 4 and buttonState == 3)
+ {
+  destination = 4;
+//      Serial.println("Do nothing");
+//  delay(1000);
+  }
+    }
+    
+
+//Functions end -------------------------------------
+
+
+
+
+
+void setup() {
+
+// put your setup code here, to run once:
+
+pinMode(dig1,INPUT);
+pinMode(dig2,INPUT);
+pinMode(dig3,INPUT);
+//Serial.begin(9600); 
+
+//7-segment display
+pinMode(14,OUTPUT);
+pinMode(15,OUTPUT);
+
+//motors
+pinMode(pHoistDir, OUTPUT);
+pinMode(pHoistPwm, OUTPUT);
+}
+
+ 
+
+void loop() {
+
+// put your main code here, to run repeatedly:
+
+
+//floor sensors ------------------------
+LSD=digitalRead(dig1); 
+Middle=digitalRead(dig2); 
+MSD=digitalRead(dig3); \
+
+int sensors =(LSD)+(Middle<<1)+(MSD<<2);
+
+//only set CurrentPos if sensor is a valid number
+if (sensors != 0)
+{
+  CurrentPos = sensors;
+  }
+
+// This turns our binary number into a decimal. Starting from the least significant figure (LSD) we then add the other two digits but must shift them one (<<1) or two (<<2) place(s)  to the left so that 1+1+1 is not 3 but 111 which is actually 7.
+
+
+SevenSegment();
+//Serial.println(CurrentPos); 
+
+//delay(1000);
+
+//floor sensors end ------------------------
+
+//7-segment display ----------------------
+
+  digitalWrite(14,DisplayPos1);
+  digitalWrite(15,DisplayPos2);
+
+//7-segment display end ----------------------
+
+//Yellow buttons -----------------------------
+
+ CallButtons();
+ 
+ //Yellow buttons end -----------------------------
+
+//elevator move ------------------------------------
+  Movement();
+//  Serial.println(CurrentPos);
+//  Serial.println(destination);
+//  Serial.println(Mspeed);
+//  delay(1000);
+//elevator movement end ------------------------------------
+}
